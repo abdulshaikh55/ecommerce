@@ -25,6 +25,7 @@ export const LoginSignup = () => {
             placeholder="Password"
           />
         </div>
+
         <button>Continue</button>
         <p className={styles.loginSignupLogin}>
           Already have an account? <span>Login</span>
