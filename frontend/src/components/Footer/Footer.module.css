@@ -60,3 +60,37 @@
 
     }
 }
+
+@media (max-width: 800px) {
+    .footer{
+        gap: 20px;
+    }
+
+    .footerLogo{
+        gap: 10px;
+        align-items: end;
+
+        img{
+            width: 40px;
+        }
+
+        p{
+            font-size: 25px;
+        }
+    }
+
+    .footerLinks{
+        font-size: 14px;
+        gap: 10px;
+    }
+
+    .footerSocialIcon{
+        img{
+            width: 22px;
+        }
+    }
+
+    .footerCopyright{
+        font-size: 13px;
+    }
+}
