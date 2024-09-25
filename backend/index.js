@@ -135,6 +135,85 @@ app.get('/allproducts', async (req, res) => {
     res.send(products);
 })
 
+
+// Schema creating for user model
+
+const Users = mongoose.model("Users", {
+    name: {
+        type: String,
+    },
+
+    email: {
+        type: String,
+        unique: true,
+    },
+
+    password: {
+        type: String,
+    },
+
+    cartData: {
+        type: Object,
+    },
+
+    date: {
+        type: Date,
+        default: Date.now,
+    }
+})
+
+// Creating endpoint for registering the user
+app.post('/signup', async (req, res) => {
+    const { username, email, password } = req.body; // Extracting user data from request body
+    const emailAlreadyExists = await Users.findOne({ email }); // Checking if email already exists
+
+    if (emailAlreadyExists) {
+        return res.status(400).json({ success: false, error: "Account with this email already exists" });
+    }
+
+    const cart = Array.from({ length: 300 }, (_, i) => i); // Creating an array of 300 elements with values from 0 to 299
+
+    const user = new Users({
+        name: username,
+        email,
+        password,
+        cartData: cart,
+    });
+
+    await user.save(); // Saving the user to the database
+
+    const tokenData = { user: { id: user.id } }; // Preparing token data
+    const token = jwt.sign(tokenData, "secret_ecom"); // Signing the token
+
+    res.json({ success: true, token }); // Sending the token back to the client
+})
+
+// Creating endpoint for user login
+
+app.post('/login', async (req, res) => {
+    let user = await Users.findOne({ email: req.body.email })
+
+    if (user) {
+        const passCompare = req.body.password === user.password;
+
+        if (passCompare) {
+            const data = {
+                user: {
+                    id: user.id,
+                }
+            }
+
+            const token = jwt.sign(data, "secret_ecom");
+            res.json({ success: true, token });
+        }
+        else {
+            res.json({ success: false, error: "Wrong password" })
+        }
+    } else {
+        res.json({ success: false, error: "Wrong Email" })
+    }
+})
+
 app.listen(port, () => {
     console.log(`Server running on port: ${port}`);
 })
